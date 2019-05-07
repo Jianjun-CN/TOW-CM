@@ -1,3 +1,8 @@
+##### y denote the phenotype matrix, each row denote observation and each column denote the pheotype.
+##### x denote the genetypic score , each row denote observation and each column denote the SNPs.
+##### numper denote the number of permutation time.
+
+
 TOW_CM=function(y,x,numper){
   I=matrix(1,nrow(y),1)
   P=diag(1,nrow(y))-1/nrow(y)*I%*%t(I)
