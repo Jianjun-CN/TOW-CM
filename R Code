@@ -8,25 +8,24 @@ TOW_CM=function(y,x,numper){
   P=diag(1,nrow(y))-1/nrow(y)*I%*%t(I)
   D=t(y)%*%P%*%y
   L=t(chol(D))
+  L0=solve(L)
   ######################################
   M=x%*%ginv(t(x)%*%P%*%x)%*%t(x)
   #####################################
-  C=solve(L)%*%t(y)%*%P%*%M%*%P%*%y%*%t(solve(L))
+  C=L0%*%t(y)%*%P%*%M%*%P%*%y%*%t(L0)
   va=eigen(C,symmetric=T)$values
   ve=eigen(C,symmetric=T)$vectors[,which(va==max(va))]
-  W=matrix(t(solve(L))%*%ve,ncol(L),1)  
+  W=matrix(t(L0)%*%ve,ncol(L),1)  
   ##########################################
   T1=(t(W)%*%t(y)%*%P%*%M%*%P%*%y%*%W)/(t(W)%*%t(y)%*%P%*%y%*%W)
   ############################# for loop ############# 
   T1per=rep(0,numper)
   for(i in 1:numper){
     yper=apply(y,2,sample)
-    D=t(yper)%*%P%*%yper
-    L=t(chol(D))
-    C=solve(L)%*%t(yper)%*%P%*%M%*%P%*%yper%*%t(solve(L))
+    C=L0%*%t(yper)%*%P%*%M%*%P%*%yper%*%t(L0)
     va=eigen(C,symmetric=T)$values
     ve=eigen(C,symmetric=T)$vectors[,which(va==max(va))]
-    W=matrix(t(solve(L))%*%ve,ncol(L),1)
+    W=matrix(t(L0)%*%ve,ncol(L),1)
     T1per[i]=(t(W)%*%t(yper)%*%P%*%M%*%P%*%yper%*%W)/(t(W)%*%t(yper)%*%P%*%yper%*%W)
   }
   pv=sum(as.numeric(T1per)>as.numeric(T1))/numper
